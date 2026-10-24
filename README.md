@@ -1,58 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PR0413_2_2026_HITO3_error418
+**Sistema de Gestión Escolar con PHP, Laravel y Doble Conexión MySQL**
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 1. Descripción del Problema
+La institución educativa requiere un sistema centralizado para administrar la información académica. El desafío principal es la distribución de los datos: la información transaccional (estudiantes, asignaturas, notas) se maneja en un servidor local (Docker), mientras que los datos maestros (docentes, aulas, gestión) residen en el servidor institucional (red local). 
 
-## About Laravel
+La solución implementa una arquitectura de conexión dual que evita la duplicación de tablas, garantizando la integridad referencial desde la aplicación mediante validaciones y programación orientada a objetos (POO).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 2. Descripción Funcional
+La aplicación permite:
+- **Gestión Local (Docker):** Registrar, consultar, modificar y eliminar Estudiantes, Asignaturas, Inscripciones y Calificaciones.
+- **Consulta Institucional (Red Local):** Visualizar Docentes, Aulas y Gestión Académica.
+- **Relación Cruzada:** Asignar docentes a materias consultando ambas bases de datos simultáneamente.
+- **Seguridad:** Uso de tipado estricto (`declare(strict_types=1)`), validaciones y manejo de excepciones.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 3. Integrantes y Responsabilidades
+| Integrante | Rol / Responsabilidades | Usuario de GitHub |
+|---|---|---|
+| Aranda Silva Alan Cristhofer | Backend Laravel | [@alanhack777](https://github.com/alanhack777) |
+| Quispe Mamani Rosmery | Funcionalidad web | [@rosmeryqm2020-afk](https://github.com/rosmeryqm2020-afk) |
+| Copa Pérez Neyda Milena | Bases de datos e integración | [@Milenacopa120-0409](https://github.com/Milenacopa120-0409) |
+| Canchilla Mamani Fabricio Isaac | Docker, despliegue y documentación | [@FabricioCanchilla](https://github.com/FabricioCanchilla) |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 4. Arquitectura
+El sistema se compone de tres capas principales:
+1. **Contenedor App (Laravel):** Servidor web en PHP 8.4. Expone la aplicación en el puerto `8000`.
+2. **Contenedor DB (MySQL Docker):** Base de datos relacional local para datos académicos. Utiliza un volumen persistente (`dbdata`).
+3. **Servidor MySQL Institucional:** Base de datos externa proporcionada por el docente.
 
-## Learning Laravel
+*Flujo de datos:* El usuario interactúa con Laravel, el cual utiliza múltiples conexiones de Eloquent para consultar y escribir dinámicamente en la base de datos correspondiente.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 5. Requisitos Previos
+- **Docker** y **Docker Compose**.
+- **Git**.
+- **PHP 8.4** y **Composer** (solo si se ejecuta sin Docker).
+- Acceso a la red local (para la base de datos institucional).
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+## 6. Clonación
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/FabricioCanchilla/PRO413_2_2026_HITO3_error418.git
+cd PRO413_2_2026_HITO3_error418
 
-php artisan boost:install
-```
+## 7. Configuración (Variables de Entorno)
+Copia el archivo de ejemplo:
+```bash
+# Windows
+copy .env.example .env
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+# Linux / Mac
+cp .env.example .env
 
-## Contributing
+## 8. Construcción de la Imagen
+Para construir la imagen con el nombre exacto requerido por la rúbrica:
+```bash
+docker build -t gestion-escolar:error418 .
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 9. Descarga y Ejecución
+Levanta los servicios (App y DB Docker) en segundo plano:
+```bash
+docker compose up -d --build
 
-## Code of Conduct
+## 10. Base de Datos Docker (Local)
+El contenedor MySQL se inicia automáticamente. Para crear las tablas e importar los datos de prueba:
+```bash
+# Reemplaza <nombre_contenedor> por el nombre de tu contenedor MySQL
+docker exec -i <nombre_contenedor> mysql -u root -p < database/docker.sql
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 11. Base de Datos Institucional (Red Local)
+Para conectarse al servidor del docente, configura la IP y credenciales en las variables `DB_INSTITUCIONAL_*` del `.env`. La aplicación está programada para consultar esta base de datos sin modificar las tablas locales.
 
-## Security Vulnerabilities
+## 12. Verificación del Funcionamiento
+1. Accede a `http://localhost:8000`.
+2. Registra un estudiante y verifica que aparezca en el listado (Prueba DB Docker).
+3. Abre el módulo de docentes y verifica que carguen los datos desde la base institucional (Prueba de doble conexión).
+4. Intenta enviar un formulario con datos inválidos para comprobar las validaciones.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 13. Solución de Problemas
+| Problema | Causa / Solución |
+|---|---|
+| Error de conexión a MySQL | Ejecuta `docker compose ps` y verifica que el contenedor de la DB esté arriba. |
+| No conecta a la base institucional | Revisa la IP, el puerto y las credenciales en `DB_INSTITUCIONAL_*`. |
+| Error de permisos en Linux | Ejecuta `chmod -R 777 storage bootstrap/cache`. |
+| El puerto 8000 está ocupado | Cambia el mapeo de puertos en `docker-compose.yml`. |
+| Laravel no encuentra las tablas | Ejecuta las migraciones: `docker compose exec app php artisan migrate`. |
