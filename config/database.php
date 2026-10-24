@@ -42,16 +42,6 @@ return [
             'journal_mode' => null,
             'synchronous' => null,
             'transaction_mode' => 'DEFERRED',
-            'institucional' => [
-    'driver'    => 'mysql',
-    'host'      => env('DB2_HOST'),
-    'port'      => env('DB2_PORT', '3306'),
-    'database'  => env('DB2_DATABASE'),
-    'username'  => env('DB2_USERNAME'),
-    'password'  => env('DB2_PASSWORD'),
-    'charset'   => 'utf8mb4',
-    'collation' => 'utf8mb4_unicode_ci',
-],
         ],
 
         'mysql' => [
@@ -72,6 +62,23 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+        ],
+
+        // Segunda conexión: servidor MySQL institucional (docente)
+        'institucional' => [
+            'driver' => 'mysql',
+            'host' => env('DB2_HOST'),
+            'port' => env('DB2_PORT', '3306'),
+            'database' => env('DB2_DATABASE'),
+            'username' => env('DB2_USERNAME'),
+            'password' => env('DB2_PASSWORD'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'options' => [
+                \PDO::ATTR_TIMEOUT => 5,
+            ],
         ],
 
         'mariadb' => [
